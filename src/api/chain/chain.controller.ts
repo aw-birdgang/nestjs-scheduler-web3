@@ -104,4 +104,17 @@ export class ChainController {
     }
 
 
+    @Get('contract/:address')
+    @ApiOperation({ summary: '컨트렉트 정보 요청 API' })
+    @ApiOkResponse({
+        description: '컨트렉트 정보 요청.',
+    })
+    async contractInfo(
+      @Param('address') address: string,
+      @Res() res: Response
+    ) {
+        const response = await this.chainService.contractInfo(address);
+        return res.status(HttpStatus.OK).json(instanceToPlain(response));
+    }
+
 }

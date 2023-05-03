@@ -1,14 +1,14 @@
-import {Controller, Get, HttpStatus, Param, ParseIntPipe, Request, Res} from '@nestjs/common';
+import {Controller, Get, HttpStatus, Param, Request, Res} from '@nestjs/common';
 import {ApiOkResponse, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {Response} from "express";
 import {instanceToPlain} from "class-transformer";
-import {ChainService} from "./chain.service";
+import { Web3EthService } from './web3-eth.service';
 
-@Controller('v1/chain')
-@ApiTags('CHAIN API')
-export class ChainController {
+@Controller('v1/web3-eth')
+@ApiTags('WEB3 ETH API')
+export class Web3EthController {
     constructor(
-        private readonly chainService: ChainService) {
+        private readonly web3EthService: Web3EthService) {
     }
 
     @Get('chainId')
@@ -20,21 +20,7 @@ export class ChainController {
         @Request() req,
         @Res() res: Response
     ) {
-        const response = await this.chainService.requestChainId();
-        return res.status(HttpStatus.OK).json(instanceToPlain(response));
-    }
-
-
-    @Get('blockNumber')
-    @ApiOperation({ summary: '블록 넘버 요청 API' })
-    @ApiOkResponse({
-        description: '블록 넘버 요청.',
-    })
-    async findBlockNumber(
-        @Request() req,
-        @Res() res: Response
-    ) {
-        const response = await this.chainService.requestBlockNumber();
+        const response = await this.web3EthService.requestChainId();
         return res.status(HttpStatus.OK).json(instanceToPlain(response));
     }
 
@@ -47,7 +33,7 @@ export class ChainController {
         @Request() req,
         @Res() res: Response
     ) {
-        const response = await this.chainService.requestGasPrice();
+        const response = await this.web3EthService.requestGasPrice();
         return res.status(HttpStatus.OK).json(instanceToPlain(response));
     }
 
@@ -60,20 +46,7 @@ export class ChainController {
         @Param('address') address: string,
         @Res() res: Response
     ) {
-        const response = await this.chainService.requestBalance(address); // we are give name of client in config file
-        return res.status(HttpStatus.OK).json(instanceToPlain(response));
-    }
-
-    @Get('block/:number')
-    @ApiOperation({ summary: '블록 정보 요청 API' })
-    @ApiOkResponse({
-        description: '블록 정보 요청.',
-    })
-    async blockInfo(
-        @Param('number', new ParseIntPipe()) number: number,
-        @Res() res: Response
-    ) {
-        const response = await this.chainService.requestGetBlock(number);
+        const response = await this.web3EthService.requestBalance(address); // we are give name of client in config file
         return res.status(HttpStatus.OK).json(instanceToPlain(response));
     }
 
@@ -86,7 +59,7 @@ export class ChainController {
         @Param('blockNumber') blockNumber: string,
         @Res() res: Response
     ) {
-        const response = await this.chainService.requestGetBlockTransactionCount(blockNumber);
+        const response = await this.web3EthService.requestGetBlockTransactionCount(blockNumber);
         return res.status(HttpStatus.OK).json(instanceToPlain(response));
     }
 
@@ -99,10 +72,9 @@ export class ChainController {
         @Param('hash') hash: string,
         @Res() res: Response
     ) {
-        const response = await this.chainService.requestTransaction(hash);
+        const response = await this.web3EthService.requestTransaction(hash);
         return res.status(HttpStatus.OK).json(instanceToPlain(response));
     }
-
 
     @Get('contract/:address')
     @ApiOperation({ summary: '컨트렉트 정보 요청 API' })
@@ -110,11 +82,10 @@ export class ChainController {
         description: '컨트렉트 정보 요청.',
     })
     async contractInfo(
-      @Param('address') address: string,
-      @Res() res: Response
+        @Param('address') address: string,
+        @Res() res: Response
     ) {
-        const response = await this.chainService.contractInfo(address);
+        const response = await this.web3EthService.contractInfo(address);
         return res.status(HttpStatus.OK).json(instanceToPlain(response));
     }
-
 }

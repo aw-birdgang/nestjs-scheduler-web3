@@ -11,8 +11,6 @@ import {Repository} from "typeorm";
 @ApiTags('BLOCK API')
 export class BlockController {
     constructor(
-        @InjectRepository(Block)
-        private blockRepository: Repository<Block>,
         private readonly blockService: BlockService) {
     }
 
@@ -45,7 +43,7 @@ export class BlockController {
         return res.status(HttpStatus.OK).json(instanceToPlain(response));
     }
 
-    @Get('block/:number')
+    @Get('number/:number')
     @ApiOperation({ summary: '블록 정보 요청 API' })
     @ApiOkResponse({
         description: '블록 정보 요청.',
@@ -55,6 +53,19 @@ export class BlockController {
         @Res() res: Response
     ) {
         const response = await this.blockService.requestGetBlock(number);
+        return res.status(HttpStatus.OK).json(instanceToPlain(response));
+    }
+
+    @Get('number/:number/transaction')
+    @ApiOperation({ summary: '블록 트랜잭션 아이디 요청 API' })
+    @ApiOkResponse({
+        description: '블록 트랜잭션 아이디 요청.',
+    })
+    async blockTransactionIds(
+        @Param('number', new ParseIntPipe()) number: number,
+        @Res() res: Response
+    ) {
+        const response = await this.blockService.requestGetBlockTransactionIds(number);
         return res.status(HttpStatus.OK).json(instanceToPlain(response));
     }
 

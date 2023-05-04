@@ -18,8 +18,8 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
     // const entities = [__dirname + '/../../**/*.entity{.ts,.js}'];
     const entities = ["dist/**/*.entity{.ts,.js}"];
     // const entities2 = this.configService.get('ENTITIES');
-    const synchronize = this.configService.isEnv('development');
-    // const synchronize = false;
+    // const synchronize = this.configService.isEnv('development');
+    const synchronize = true;
     const logging = this.configService.isEnv('development');
 
     this.logger.log('type : ' + type);

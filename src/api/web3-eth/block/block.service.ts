@@ -43,21 +43,31 @@ export class BlockService {
     }
 
     async requestGetBlock(blockNumber : number): Promise<Block> {
-        const client = this.web3Service.getClient('eth'); // we are give name of client in config file
-        const transaction = await client.eth.getBlock(blockNumber);
+        const client = this.web3Service.getClient('eth');
+        const blockTransaction = await client.eth.getBlock(blockNumber);
+        this.logger.log(blockTransaction);
         const block = new Block();
-        block.number = transaction.number;
-        block.hash = transaction.hash;
-        block.parentHash = transaction.parentHash;
-        block.nonce = transaction.nonce;
-        block.gasLimit = transaction.gasLimit;
-        block.difficulty = transaction.difficulty;
-        const transactions = transaction.transactions as [];
+        block.number = blockTransaction.number;
+        block.hash = blockTransaction.hash;
+        block.parentHash = blockTransaction.parentHash;
+        block.nonce = blockTransaction.nonce;
+        block.gasLimit = blockTransaction.gasLimit;
+        block.difficulty = blockTransaction.difficulty;
+        const transactions = blockTransaction.transactions as [];
         for (const transaction of transactions) {
             this.logger.log(transaction);
         }
         const response = await this.createBlockInfo(block);
         return response;
+    }
+
+    async requestGetBlockTransactionIds(blockNumber : number): Promise<string[]> {
+        const client = this.web3Service.getClient('eth');
+        const blockTransaction = await client.eth.getBlock(blockNumber);
+        this.logger.log(blockTransaction);
+        const transactions = blockTransaction.transactions as [];
+        await this.transactionService.createTransactionInfo(transactions);
+        return transactions;
     }
 
     private async createBlockInfo(block: Block): Promise<Block> {
